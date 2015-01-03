@@ -80,7 +80,7 @@ class ArrayMerger
         return static::doMerge($default, $precedence, $this->flags);
     }
 
-    public static function doMerge(array $default, array $precedence, $flags)
+    public static function doMerge(array $default, array $precedence, $flags = 0)
     {
         foreach ($precedence as $key => $pVal) {
             if (\is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
