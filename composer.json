@@ -1,0 +1,20 @@
+{
+    "name": "ckr/arraymerger",
+    "description": "Provides functionality to merge arrays recursively",
+    "require": {},
+    "require-dev": {
+        "phpspec/phpspec": "~2.1"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Claudio Kressibucher",
+            "email": "ckressibucher@graphicworks.ch"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ckr\\Util\\": "src/"
+        }
+    }
+}
