@@ -45,13 +45,24 @@ class ArrayMerger
      *  in the array)
      *
      * Note that this flag may slow down the operation on very large (default) arrays.
+     *
+     * Default: not set
      */
     const FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS = 4;
 
+    /**
+     * @var array
+     */
     protected $default;
 
+    /**
+     * @var array
+     */
     protected $precedence;
 
+    /**
+     * @var int
+     */
     protected $flags;
 
     public function __construct(array $default, array $precedence, $flags = 0)
