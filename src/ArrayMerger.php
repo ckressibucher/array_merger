@@ -89,6 +89,57 @@ class ArrayMerger
         return $default;
     }
 
+    /**
+     * Setter for flag FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION
+     *
+     * @param bool $flagAllowConversion
+     *
+     * @return $this
+     */
+    public function allowConversionFromScalarToArray($flagAllowConversion)
+    {
+        if ($flagAllowConversion) {
+            $this->setFlag(self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION);
+        } else {
+            $this->unsetFlag(self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION);
+        }
+        return $this;
+    }
+
+    /**
+     * Setter for flag FLAG_OVERWRITE_NUMERIC_KEY
+     *
+     * @param $flagOverwrite
+     *
+     * @return $this
+     */
+    public function overwriteNumericKey($flagOverwrite)
+    {
+        if ($flagOverwrite) {
+            $this->setFlag(self::FLAG_OVERWRITE_NUMERIC_KEY);
+        } else {
+            $this->unsetFlag(self::FLAG_OVERWRITE_NUMERIC_KEY);
+        }
+        return $this;
+    }
+
+    /**
+     * Setter for flag FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS
+     *
+     * @param $flag
+     *
+     * @return $this
+     */
+    public function preventDoubleValuesWhenAppendingNumericKeys($flag)
+    {
+        if ($flag) {
+            $this->setFlag(self::FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS);
+        } else {
+            $this->unsetFlag(self::FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS);
+        }
+        return $this;
+    }
+
     protected static function mergeRecursively($default, $precedence, $flags)
     {
         if (\is_array($default) && \is_array($precedence)) {
@@ -97,7 +148,7 @@ class ArrayMerger
         if (! \is_array($default) && ! \is_array($precedence)) {
             return $precedence; // overwrite default by precedence
         }
-        if (! $flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION) {
+        if (! ($flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION)) {
             throw new \UnexpectedValueException('different dimensions');
         }
         if (! \is_array($default)) {
@@ -107,4 +158,15 @@ class ArrayMerger
         }
         return static::doMerge($default, $precedence, $flags);
     }
+
+    private function setFlag($flag)
+    {
+        $this->flags = $this->flags | $flag;
+    }
+
+    private function unsetFlag($flag)
+    {
+        $this->flags = $this->flags & ~$flag;
+    }
+
 }

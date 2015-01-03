@@ -162,6 +162,86 @@ class ArrayMergerSpec extends ObjectBehavior
         $this->mergeData()->shouldHaveSameData($expected);
     }
 
+    // ===============================================================================
+    // ================== examples to check setting flags via setters ================
+    // ===============================================================================
+
+    function it_should_allow_setting_allowConversion_flag_via_setter()
+    {
+        $default = ['k' => 'value'];
+        $precedence = ['k' => ['othervalue']];
+
+        $expected = ['k' => [0 => 'value', 1 => 'othervalue']];
+
+        $this->beConstructedWith($default, $precedence);
+        $this->allowConversionFromScalarToArray(true)->shouldHaveType('Ckr\Util\ArrayMerger');
+        $this->mergeData()->shouldHaveSameData($expected);
+    }
+
+
+    function it_should_allow_unsetting_allowConversion_flag_via_setter()
+    {
+        $default = ['k' => 'value'];
+        $precedence = ['k' => ['othervalue']];
+        $flags = ~0; // all bits set
+
+        $this->beConstructedWith($default, $precedence, $flags);
+        $this->allowConversionFromScalarToArray(false)->shouldHaveType('Ckr\Util\ArrayMerger');
+        $this->shouldThrow('UnexpectedValueException')->during('mergeData');
+    }
+
+    function it_should_allow_setting_overwriteNumericKey_flag_via_setter()
+    {
+        $default = [1 => 'a'];
+        $precedence = [1 => 'b'];
+        $expected = [1 => 'b'];
+
+        $this->beConstructedWith($default, $precedence);
+        $this->overwriteNumericKey(true)->shouldHaveType('\Ckr\Util\ArrayMerger');
+        $this->mergeData()->shouldHaveSameData($expected);
+    }
+
+    function it_should_allow_unsetting_overwriteNumericKey_flag_via_setter()
+    {
+        $default = [1 => 'a'];
+        $precedence = [1 => 'b'];
+        $flags = ~0; // all bits set
+        $expected = [1 => 'a', 2 => 'b'];
+
+        $this->beConstructedWith($default, $precedence, $flags);
+        $this->overwriteNumericKey(false)->shouldHaveType('\Ckr\Util\ArrayMerger');
+        $this->mergeData()->shouldHaveSameData($expected);
+    }
+
+    function it_should_allow_setting_preventDoubleWhenAppending_via_setter()
+    {
+        $default = [0 => 'value', 2 => 'x', 3 => 'y', 4 => 'z'];
+        $precedence = [1 => 'value', 2 => 'y', 4 => 'z', 100 => 'valid'];
+
+        $expected = $default;
+        $expected[] = 'valid';
+
+        $this->beConstructedWith($default, $precedence);
+        $this->preventDoubleValuesWhenAppendingNumericKeys(true)
+            ->shouldHaveType('\Ckr\Util\ArrayMerger');
+        $this->mergeData()->shouldHaveSameData($expected);
+    }
+
+    function it_should_allow_unsetting_preventDoubleWhenAppending_via_setter()
+    {
+        $default = [1 => 'a', 99 => 'b'];
+        $precedence = [1 => 'b'];
+        $expected = [1 => 'a', 99 => 'b', 100 => 'b'];
+
+        $flags = ~0;
+
+        $this->beConstructedWith($default, $precedence, $flags);
+        $this->preventDoubleValuesWhenAppendingNumericKeys(false)
+            ->shouldHaveType('\Ckr\Util\ArrayMerger');
+        $this->overwriteNumericKey(false);
+        $this->mergeData()->shouldHaveSameData($expected);
+    }
+
     public function getMatchers()
     {
         return array(
