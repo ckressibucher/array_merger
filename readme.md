@@ -123,15 +123,18 @@ Configuration values are applied by flags. You can combine them, before passing 
 If you use an instance of the class, you can dynamically set and unset flags:
 
 ```php
-    $obj = new \Ckr\Util\ArrayMerger($default, $precedence);
-    $merged = $obj->allowConversionFromScalarToArray(true)
-       ->overwriteNumericKey(true)
-       ->mergeData();
+$default = array(0 => 'a', 1 => 'b', 'x' => 'z');
+$precedence = array(0 => 'a', 'x' => 'y', 'y' => 'y');
 
-    $merged2 = $obj->overwriteNumericKey(false)->mergeData();
+$obj = new \Ckr\Util\ArrayMerger($default, $precedence);
+$merged = $obj->allowConversionFromScalarToArray(true)
+   ->overwriteNumericKey(true)
+   ->mergeData();
 
-    echo count($merged);  // 4
-    echo count($merged2); // 5
+$merged2 = $obj->overwriteNumericKey(false)->mergeData();
+
+echo count($merged);  // 4
+echo count($merged2); // 5
 ```
 
 For more examples, please see the phpSpec methods.
