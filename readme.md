@@ -11,7 +11,11 @@ Basic Usage
 -----------
 
 ```php
+// the default array has lower priority
 $default = array(0 => 'a', 1 => 'b', 'x' => 'z');
+
+// the values of the $precedence array have higher priority than
+// the values of the $default array
 $precedence = array(0 => 'a', 'x' => 'y', 'y' => 'y');
 
 // use the static method...
@@ -30,6 +34,27 @@ Array
     [x] => y // from $precedence (overwrite value from $default)
     [2] => a // from $precedence[0] (values associated to numeric keys get appended by default)
     [y] => y // from $precedence (new value, associated to string key)
+)
+*/
+```
+
+Another simple example with recursion:
+
+```php
+$default = array('outer' => array('a' => 'a', 'b' => 'b'));
+$precedence = array('outer' => array('b' => 'x'));
+$merged = \Ckr\Util\ArrayMerger::doMerge($default, $precedence);
+
+print_r($merged);
+/*
+Array
+(
+    [outer] => Array
+        (
+            [a] => a // from $default
+            [b] => x // from $precedence, overwriting $default['outer']['b']
+        )
+
 )
 */
 ```
