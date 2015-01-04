@@ -93,7 +93,7 @@ Configuration values are applied by flags. You can combine them, before passing 
     $merged = \Ckr\Util\ArrayMerger::doMerge($default, $precedence, $flags);
 ```
 
-If you use build an instance of the class, you can dynamically set and unset flags:
+If you use an instance of the class, you can dynamically set and unset flags:
 
 ```php
     $obj = new \Ckr\Util\ArrayMerger($default, $precedence);
