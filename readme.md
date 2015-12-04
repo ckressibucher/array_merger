@@ -7,6 +7,16 @@ create an instance, configure it, and then call an instance method.
 
 [![Build Status](https://travis-ci.org/ckressibucher/array_merger.svg?branch=master)](https://travis-ci.org/ckressibucher/array_merger)
 
+Compatibility
+------------
+
+This library currently works with php-5.4 until php-7.0.
+Because of version incompatibilities with dev-dependencies (they need php-5.5), the dev dependencies can not be resolved by composer with php-5.4. When updating the dependencies with `composer update --no-dev`, there should be no problems.
+
+So, even if the library *should* work with php-5.4, it is not really tested. You should use at least php-5.5!
+
+I've removed the test configuration "php: 5.4" from the travis setup.
+
 Basic Usage
 -----------
 
