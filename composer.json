@@ -2,7 +2,7 @@
     "name": "ckr/arraymerger",
     "description": "Provides functionality to merge arrays recursively",
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.5.0"
     },
     "require-dev": {
         "phpspec/phpspec": "~2.1"

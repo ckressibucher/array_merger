@@ -10,17 +10,8 @@ create an instance, configure it, and then call an instance method.
 Compatibility
 ------------
 
-This library currently works with php-5.4 until php-7.0.
-Because of version incompatibilities with dev-dependencies (they need php-5.5),
-the dev dependencies can not be resolved by composer executed by a php-5.4 binary.
-When updating the dependencies with `composer update --no-dev`, there should be no problems, even
-if composer is run by php5.4.
-
-But, even if the library *should* work with php-5.4, it is not really tested.
-You should use at least php-5.5! Note also, that in the next version, support for php5.4 will
-likely be dropped.
-
-I've removed the test configuration "php: 5.4" from the travis setup.
+This library currently works with php-5.5 until php-7.0.
+If you need support for php-5.4, use version *1.0.0*.
 
 Basic Usage
 -----------
