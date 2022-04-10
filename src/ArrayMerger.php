@@ -80,7 +80,7 @@ class ArrayMerger
         return static::doMerge($default, $precedence, $this->flags);
     }
 
-    public static function doMerge(array $default, array $precedence, $flags = 0)
+    public static function doMerge(array $default, array $precedence, $flags = 0, array $address = [])
     {
         foreach ($precedence as $key => $pVal) {
             if (\is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
@@ -92,7 +92,9 @@ class ArrayMerger
                 continue;
             }
             if (\array_key_exists($key, $default)) {
-                $default[$key] = static::mergeRecursively($default[$key], $pVal, $flags);
+                $newAddress = $address;
+                $newAddress[] = $key;
+                $default[$key] = static::mergeRecursively($default[$key], $pVal, $flags, $newAddress);
             } else {
                 $default[$key] = $pVal;
             }
@@ -151,7 +153,7 @@ class ArrayMerger
         return $this;
     }
 
-    protected static function mergeRecursively($default, $precedence, $flags)
+    protected static function mergeRecursively($default, $precedence, $flags, array $address)
     {
         if (\is_array($default) && \is_array($precedence)) {
             return static::doMerge($default, $precedence, $flags);
@@ -160,14 +162,20 @@ class ArrayMerger
             return $precedence; // overwrite default by precedence
         }
         if (! ($flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION)) {
-            throw new \UnexpectedValueException('different dimensions');
+            if (is_array($default)) {
+                $reason = 'default is an array while precedence is a scalar';
+            }
+            else {
+                $reason = 'default is a scalar while precedence is an array';
+            }
+            throw new \UnexpectedValueException('different dimensions at array address ' . implode('->', $address) . ': ' . $reason);
         }
         if (! \is_array($default)) {
             $default = array(0 => $default);
         } else {
             $precedence = array(0 => $precedence);
         }
-        return static::doMerge($default, $precedence, $flags);
+        return static::doMerge($default, $precedence, $flags, $address);
     }
 
     private function setFlag($flag)
