@@ -10,7 +10,8 @@ create an instance, configure it, and then call an instance method.
 Compatibility
 ------------
 
-This library currently works with php-5.5 until php-7.0.
+This library currently works with php-7.0 until php-8.1.
+If you need support for php-5.5 up to php-7.0, use version *2.0.0*.
 If you need support for php-5.4, use version *1.0.0*.
 
 Basic Usage
