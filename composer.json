@@ -23,5 +23,11 @@
         "psr-4": {
             "spec\\Ckr\\Util\\": "spec/"
         }
+    },
+    "scripts": {
+        "test": [
+            "@composer install",
+            "phpspec run"
+        ]
     }
 }

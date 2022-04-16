@@ -5,8 +5,6 @@ This is a simple utility to recursively merge php arrays.
 It's just one class, providing a static method. Alternatively, you can
 create an instance, configure it, and then call an instance method.
 
-[![Build Status](https://travis-ci.org/ckressibucher/array_merger.svg?branch=master)](https://travis-ci.org/ckressibucher/array_merger)
-
 Compatibility
 ------------
 
