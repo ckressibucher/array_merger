@@ -168,12 +168,12 @@ class ArrayMerger
         }
         if (! ($flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION)) {
             if (is_array($default)) {
-                $reason = 'default is an array while precedence is a scalar';
+                $reason = "'default' side value is an array while 'precedence' side value is a scalar";
             }
             else {
-                $reason = 'default is a scalar while precedence is an array';
+                $reason = "'default' side value is a scalar while 'precedence' side value is an array";
             }
-            throw new \UnexpectedValueException('different dimensions at array address ' . implode('->', $address) . ': ' . $reason);
+            throw new \UnexpectedValueException("different dimensions at array address '" . implode('->', $address) . "': " . $reason);
         }
         if (! \is_array($default)) {
             $default = array(0 => $default);
