@@ -80,7 +80,12 @@ class ArrayMerger
         return static::doMerge($default, $precedence, $this->flags);
     }
 
-    public static function doMerge(array $default, array $precedence, $flags = 0, array $address = [])
+    public static function doMerge(array $default, array $precedence, $flags = 0)
+    {
+        return static::doMergeReal($default, $precedence, $flags, []);
+    }
+
+    protected static function doMergeReal(array $default, array $precedence, $flags = 0, array $address)
     {
         foreach ($precedence as $key => $pVal) {
             if (\is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
@@ -156,7 +161,7 @@ class ArrayMerger
     protected static function mergeRecursively($default, $precedence, $flags, array $address)
     {
         if (\is_array($default) && \is_array($precedence)) {
-            return static::doMerge($default, $precedence, $flags);
+            return static::doMergeReal($default, $precedence, $flags, $address);
         }
         if (! \is_array($default) && ! \is_array($precedence)) {
             return $precedence; // overwrite default by precedence
@@ -175,7 +180,7 @@ class ArrayMerger
         } else {
             $precedence = array(0 => $precedence);
         }
-        return static::doMerge($default, $precedence, $flags, $address);
+        return static::doMergeReal($default, $precedence, $flags, $address);
     }
 
     private function setFlag($flag)
