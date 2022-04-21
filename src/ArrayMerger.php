@@ -85,7 +85,7 @@ class ArrayMerger
         return static::doMergeReal($default, $precedence, $flags, []);
     }
 
-    protected static function doMergeReal(array $default, array $precedence, $flags = 0, array $address)
+    protected static function doMergeReal(array $default, array $precedence, $flags = 0, array $address = [])
     {
         foreach ($precedence as $key => $pVal) {
             if (\is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
