@@ -1,0 +1,22 @@
+name: unit-tests
+
+on: [push]
+
+jobs:
+  phpspec_php7:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: php-actions/composer@v6
+        with:
+          php_version: "7.4"
+          command: test
+
+  phpspec_php8:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: php-actions/composer@v6
+        with:
+          php_version: "8.1"
+          command: test

@@ -242,7 +242,7 @@ class ArrayMergerSpec extends ObjectBehavior
         $this->mergeData()->shouldHaveSameData($expected);
     }
 
-    public function getMatchers()
+    public function getMatchers(): array
     {
         return array(
             // checks that two arrays have the same data (ignoring the order of string keys)

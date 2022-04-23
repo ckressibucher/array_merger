@@ -5,12 +5,11 @@ This is a simple utility to recursively merge php arrays.
 It's just one class, providing a static method. Alternatively, you can
 create an instance, configure it, and then call an instance method.
 
-[![Build Status](https://travis-ci.org/ckressibucher/array_merger.svg?branch=master)](https://travis-ci.org/ckressibucher/array_merger)
-
 Compatibility
 ------------
 
-This library currently works with php-5.5 until php-7.0.
+This library currently works with php-7.0 until php-8.1.
+If you need support for php-5.5 up to php-7.0, use version *2.0.0*.
 If you need support for php-5.4, use version *1.0.0*.
 
 Basic Usage

@@ -2,6 +2,8 @@
 
 namespace Ckr\Util;
 
+use UnexpectedValueException;
+
 class ArrayMerger
 {
 
@@ -9,7 +11,7 @@ class ArrayMerger
      * Given the default array has a scalar 'value' at key 'k' and
      * the precedence array has a sub array at the same key 'k'.
      *
-     * If flag is set, the default scalar value 'value' is wrapped in
+     * If the flag is set, the default scalar value 'value' is wrapped in
      * an array [0 => 'value'] before the merge is done.
      *
      * If the flag is NOT set, then an exception is thrown.
@@ -19,7 +21,7 @@ class ArrayMerger
     const FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION = 1;
 
     /**
-     * If flag is set, the value of the precedence array for a given key
+     * If the flag is set, the value of the precedence array for a given key
      * will overwrite the value of the default array for the same key.
      *
      * If flag is NOT set, the value of the precedence array is appended
@@ -31,7 +33,7 @@ class ArrayMerger
     const FLAG_OVERWRITE_NUMERIC_KEY = 2;
 
     /**
-     * It flag is set, a value of the precedence array for a numeric key is
+     * If the flag is set, a value of the precedence array for a numeric key is
      * only appended, if it does not exist yet in the default array.
      *
      * If flag is NOT set, the value of the precedence array is appended
@@ -65,14 +67,25 @@ class ArrayMerger
      */
     protected $flags;
 
-    public function __construct(array $default, array $precedence, $flags = 0)
+    /**
+     * @param array $default    The first array to be merged
+     * @param array $precedence The second array to be merged; values of this array take precedence over values from
+     *                          the $default array
+     * @param int   $flags      Flags to specify merge behaviour
+     */
+    public function __construct(array $default, array $precedence, int $flags = 0)
     {
         $this->default = $default;
         $this->precedence = $precedence;
         $this->flags = $flags;
     }
 
-    public function mergeData()
+    /**
+     * Performs the merge and returns the resulting array
+     *
+     * @return array
+     */
+    public function mergeData(): array
     {
         $precedence = $this->precedence;
         $default = $this->default;
@@ -80,19 +93,26 @@ class ArrayMerger
         return static::doMerge($default, $precedence, $this->flags);
     }
 
-    public static function doMerge(array $default, array $precedence, $flags = 0)
+    public static function doMerge(array $default, array $precedence, int $flags = 0): array
+    {
+        return static::doMergeReal($default, $precedence, $flags, []);
+    }
+
+    protected static function doMergeReal(array $default, array $precedence, $flags = 0, array $address = []): array
     {
         foreach ($precedence as $key => $pVal) {
-            if (\is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
+            if (is_numeric($key) && (0 === ($flags & self::FLAG_OVERWRITE_NUMERIC_KEY))) {
                 if (0 === ($flags & self::FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS)
-                    || !\in_array($pVal, $default)
+                    || !in_array($pVal, $default)
                 ) {
                     $default[] = $pVal;
                 }
                 continue;
             }
-            if (\array_key_exists($key, $default)) {
-                $default[$key] = static::mergeRecursively($default[$key], $pVal, $flags);
+            if (array_key_exists($key, $default)) {
+                $newAddress = $address;
+                $newAddress[] = $key;
+                $default[$key] = static::mergeRecursively($default[$key], $pVal, $flags, $newAddress);
             } else {
                 $default[$key] = $pVal;
             }
@@ -107,7 +127,7 @@ class ArrayMerger
      *
      * @return $this
      */
-    public function allowConversionFromScalarToArray($flagAllowConversion)
+    public function allowConversionFromScalarToArray(bool $flagAllowConversion): self
     {
         if ($flagAllowConversion) {
             $this->setFlag(self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION);
@@ -120,11 +140,11 @@ class ArrayMerger
     /**
      * Setter for flag FLAG_OVERWRITE_NUMERIC_KEY
      *
-     * @param $flagOverwrite
+     * @param bool $flagOverwrite
      *
      * @return $this
      */
-    public function overwriteNumericKey($flagOverwrite)
+    public function overwriteNumericKey(bool $flagOverwrite): self
     {
         if ($flagOverwrite) {
             $this->setFlag(self::FLAG_OVERWRITE_NUMERIC_KEY);
@@ -137,11 +157,11 @@ class ArrayMerger
     /**
      * Setter for flag FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS
      *
-     * @param $flag
+     * @param bool $flag
      *
      * @return $this
      */
-    public function preventDoubleValuesWhenAppendingNumericKeys($flag)
+    public function preventDoubleValuesWhenAppendingNumericKeys(bool $flag): self
     {
         if ($flag) {
             $this->setFlag(self::FLAG_PREVENT_DOUBLE_VALUE_WHEN_APPENDING_NUMERIC_KEYS);
@@ -151,31 +171,45 @@ class ArrayMerger
         return $this;
     }
 
-    protected static function mergeRecursively($default, $precedence, $flags)
+    /**
+     * @param mixed $default
+     * @param mixed $precedence
+     * @param int   $flags
+     * @param array $address The path of the arrays $default and $precedence, relative to the original arrays
+     *
+     * @return mixed
+     */
+    protected static function mergeRecursively($default, $precedence, int $flags, array $address)
     {
-        if (\is_array($default) && \is_array($precedence)) {
-            return static::doMerge($default, $precedence, $flags);
+        if (is_array($default) && is_array($precedence)) {
+            return static::doMergeReal($default, $precedence, $flags, $address);
         }
-        if (! \is_array($default) && ! \is_array($precedence)) {
+        if (!is_array($default) && !is_array($precedence)) {
             return $precedence; // overwrite default by precedence
         }
-        if (! ($flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION)) {
-            throw new \UnexpectedValueException('different dimensions');
+        if (!($flags & self::FLAG_ALLOW_SCALAR_TO_ARRAY_CONVERSION)) {
+            if (is_array($default)) {
+                $reason = "'default' side value is an array while 'precedence' side value is a scalar";
+            }
+            else {
+                $reason = "'default' side value is a scalar while 'precedence' side value is an array";
+            }
+            throw new UnexpectedValueException("different dimensions at array address '" . implode('->', $address) . "': " . $reason);
         }
-        if (! \is_array($default)) {
+        if (! is_array($default)) {
             $default = array(0 => $default);
         } else {
             $precedence = array(0 => $precedence);
         }
-        return static::doMerge($default, $precedence, $flags);
+        return static::doMergeReal($default, $precedence, $flags, $address);
     }
 
-    private function setFlag($flag)
+    private function setFlag(int $flag)
     {
         $this->flags = $this->flags | $flag;
     }
 
-    private function unsetFlag($flag)
+    private function unsetFlag(int $flag)
     {
         $this->flags = $this->flags & ~$flag;
     }
